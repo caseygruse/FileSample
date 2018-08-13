@@ -51,7 +51,8 @@ namespace FileSample
 				string path = save.FileName;
 				if (path == string.Empty)
 					return;
-				File.WriteAllText(path, "Test data here....");
+				StringBuilder courseList = GetCoursesFromListBox();
+				File.WriteAllText(path, courseList.ToString());
 			}
 			
 		}
@@ -59,6 +60,19 @@ namespace FileSample
 		private void SaveScheduleBasic()
 		{
 			//creating a string for all the courses for file input.
+			StringBuilder data = GetCoursesFromListBox();
+
+			string folder = GetMyDocumentsPath();
+			//the path I want the text to be saved
+			//string path = @"c:\test.txt";
+
+			string path = folder + "\\test.data";
+			//puts the string into a file with the path name (path) that is above.
+			File.WriteAllText(path, data.ToString());
+		}
+
+		private StringBuilder GetCoursesFromListBox()
+		{
 			StringBuilder data = new StringBuilder();
 			//loops through lstSchedule items and uses string builder to concatenate the strings.
 			for (int i = 0; i < lstSchedule.Items.Count; i++)
@@ -66,13 +80,31 @@ namespace FileSample
 				data.AppendLine(lstSchedule.Items[i].ToString());
 			}
 
-			string folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-			//the path I want the text to be saved
-			//string path = @"c:\test.txt";
+			return data;
+		}
 
-			string path = folder + "\\test.data";
-			//puts the string into a file with the path name (path) that is above.
-			File.WriteAllText(path, data.ToString());
+		private void btnLoadSchedule_Click(object sender, EventArgs e)
+		{
+			OpenFileDialog fileDialog = new OpenFileDialog();
+			fileDialog.InitialDirectory = GetMyDocumentsPath();
+			fileDialog.Filter = "Data File|*.data";
+			if(fileDialog.ShowDialog() == DialogResult.OK)
+			{
+				List<string> courses = File.ReadAllLines(fileDialog.FileName).ToList();
+				courses.Sort();
+				lstSchedule.Items.Clear();
+				foreach(string course in courses)
+				{
+					lstSchedule.Items.Add(course);
+				}
+			}
+		}
+		/// <summary>
+		/// gets the path to my documents folder.
+		/// </summary>
+		private string GetMyDocumentsPath()
+		{
+			return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 		}
 	}
 }

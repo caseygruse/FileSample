@@ -63,6 +63,7 @@
 			this.btnLoadSchedule.TabIndex = 2;
 			this.btnLoadSchedule.Text = "Load Schedule";
 			this.btnLoadSchedule.UseVisualStyleBackColor = true;
+			this.btnLoadSchedule.Click += new System.EventHandler(this.btnLoadSchedule_Click);
 			// 
 			// btnAddCourse
 			// 
